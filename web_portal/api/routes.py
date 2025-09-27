@@ -22,7 +22,13 @@ def analyze_emotion():
 
     most_common_emotion = emotion_detector.analyze_emotions(frame)
     
-    if most_common_emotion != 'neutral' and most_common_emotion != 'happy':
-        conn.scroll()
+    # if most_common_emotion != 'neutral' and most_common_emotion != 'happy':
+    #     conn.scroll()
+        
+    if most_common_emotion == 'happy':
+        conn.execute('emoji')
 
+    # if most_common_emotion == 'happy':
+    #     conn.execute('like')
+    
     return jsonify({"emotion": most_common_emotion})
