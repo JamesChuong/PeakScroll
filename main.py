@@ -21,6 +21,9 @@ current_emotion = ""
 
 emotion_buffer = deque(maxlen=50)  # about 1 sec if 30fps
 
+frame_count = 0
+
+skip_frame = 3
 
 if not cap.isOpened():
     print("Cannot open camera")
@@ -31,6 +34,11 @@ while True:
     ret, frame = cap.read()
 
     # if frame is read correctly ret is True
+
+    frame_count += 1
+    if frame_count % skip_frame != 0:
+        continue  # skip this frame
+
     if not ret:
         print("Can't receive frame (stream end?). Exiting ...")
         break
