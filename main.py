@@ -80,6 +80,7 @@ while True:
                 last_scroll = perf_counter()
                 print(f"Scrolling because {most_common_emotion}")
                 conn.scroll()
+                conn.execute('overlay')
 
     except Exception as e:
         print(f"Emotion analysis error: {e}")

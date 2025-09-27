@@ -1,3 +1,4 @@
+import os
 import json
 import requests
 import time
@@ -39,6 +40,24 @@ class CDPConnection:
                 "deltaX": 0,
                 "deltaY": 512,
                 "pointerType": "mouse"
+            }
+        }
+        self.msg_id += 1
+        self.send_command(json.dumps(command))
+
+    def execute(self, script_or_filename):
+        js_to_execute = script_or_filename
+        filepath = f"{script_or_filename}.js"
+
+        if os.path.exists(filepath):
+            with open(filepath, 'r') as f:
+                js_to_execute = f.read()
+
+        command = {
+            "id": self.msg_id,
+            "method": "Runtime.evaluate",
+            "params": {
+                "expression": js_to_execute
             }
         }
         self.msg_id += 1
