@@ -5,95 +5,61 @@ import cv2 as cv
 from time import perf_counter
 from deepface import DeepFace
 from enum import Enum
-
 from cdp_connection import CDPConnection
 
-cap = cv.VideoCapture(0)
 
-conn = CDPConnection()
+class EmotionDetector():
+    emotion_buffer = deque(maxlen=10)
 
-last_scroll = perf_counter()
+    def __init__(self):
 
-class Emotions(Enum):
-    HAPPY = 1
-    SAD = 2
-    NEUTRAL = 3
-    ANGRY = 4
+        pass
 
+    def analyze_emotions(self, file):
 
-face_cascade = cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        conn = CDPConnection()
+        last_scroll = perf_counter()
+        face_cascade = cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        npimg = np.frombuffer(file, np.uint8)
+        frame = cv.imdecode(npimg, cv.IMREAD_COLOR)
+        most_common_emotion = ""
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
-current_emotion = ""
+        if len(faces) > 0:
+            # For single face, select the largest one (or implement other logic)
+            (x, y, w, h) = max(faces, key=lambda rect: rect[2] * rect[3])  # Largest face by area
 
-emotion_buffer = deque(maxlen=10)  # about 1 sec if 30fps
+        else:
 
-# frame_count = 0
+            (x, y, w, h) = faces[0]
 
-# skip_frame = 3
+        face_roi = frame[y:y + h, x:x + w]
 
-if not cap.isOpened():
-    print("Cannot open camera")
-    exit()
+        try:
+            # Analyze emotions using deepface
+            predictions = DeepFace.analyze(face_roi, actions=['emotion'], enforce_detection=False)
+            if predictions:
+                emotion = predictions[0]['dominant_emotion']
+                self.emotion_buffer.append(emotion)
 
-while True:
-    # Capture frame-by-frame
-    ret, frame = cap.read()
+                # cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                # cv.putText(frame, emotion, (x, y - 10), cv.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
 
-    # if frame is read correctly ret is True
+                most_common_emotion = Counter(self.emotion_buffer).most_common(1)[0][0]
 
-    if not ret:
-        print("Can't receive frame (stream end?). Exiting ...")
-        break
-    # Our operations on the frame come here
-    gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-    # Display the resulting frame
+                # if current_emotion != most_common_emotion:
+                #     current_emotion = emotion
+                #     print(f"The emotion is {current_emotion}")
 
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+                if most_common_emotion == 'happy' and perf_counter() - last_scroll > 4:
+                    last_scroll = perf_counter()
+                    print(f"Scrolling because {most_common_emotion}")
+                    conn.scroll()
 
-    if len(faces) == 0:
+        except Exception as e:
+            # cv.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)  # Mark problematic faces
 
-        continue
+            raise ValueError(f"Emotion analysis error: {e}")
 
-    if len(faces) > 0:
-        # For single face, select the largest one (or implement other logic)
-        (x, y, w, h) = max(faces, key=lambda rect: rect[2] * rect[3])  # Largest face by area
-
-    else:
-
-        (x, y, w, h) = faces[0]
-
-    face_roi = frame[y:y + h, x:x + w]
-
-    try:
-        # Analyze emotions using deepface
-        predictions = DeepFace.analyze(face_roi, actions=['emotion'], enforce_detection=False)
-        if predictions:
-            emotion = predictions[0]['dominant_emotion']
-            emotion_buffer.append(emotion)
-
-            cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            cv.putText(frame, emotion, (x, y - 10), cv.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
-
-            most_common_emotion = Counter(emotion_buffer).most_common(1)[0][0]
-
-            # if current_emotion != most_common_emotion:
-            #     current_emotion = emotion
-            #     print(f"The emotion is {current_emotion}")
-
-            if most_common_emotion == 'happy' and perf_counter() - last_scroll > 4:
-                last_scroll = perf_counter()
-                print(f"Scrolling because {most_common_emotion}")
-                conn.scroll()
-
-    except Exception as e:
-        print(f"Emotion analysis error: {e}")
-        cv.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)  # Mark problematic faces
-
-    cv.imshow('Emotion Detection', frame)
-
-    if cv.waitKey(1) == ord('q'):
-        break
-
-# When everything done, release the capture
-cap.release()
-cv.destroyAllWindows()
+        return most_common_emotion

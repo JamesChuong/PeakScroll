@@ -35,7 +35,7 @@
         })
         .then(res => res.json())
         .then(data => {
-          emotionDisplay.innerText = "Emotion: " + data.emotion + " (conf: " + data.confidence + ")";
+          emotionDisplay.innerText = "Emotion: " + data.emotion;
         });
       }, "image/jpeg");
     }, 2000);
