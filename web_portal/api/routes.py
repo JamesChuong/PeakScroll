@@ -5,8 +5,11 @@ import json
 import websocket
 from web_portal.emotion_detector import EmotionDetector
 from web_portal.cdp_connection import CDPConnection
+from web_portal.gesture_detector import GestureDetector
 
 emotion_detector = EmotionDetector()
+
+gesture_detector = GestureDetector()
 
 conn = CDPConnection()
 
@@ -20,15 +23,15 @@ def home_page():
 def analyze_emotion():
     frame = request.files["frame"].read()
 
-    most_common_emotion = emotion_detector.analyze_emotions(frame)
-    
-    # if most_common_emotion != 'neutral' and most_common_emotion != 'happy':
-    #     conn.scroll()
-        
-    if most_common_emotion == 'happy':
+    gesture = gesture_detector.analyze_gestures(frame)
+    emotion = emotion_detector.analyze_emotions(frame)
+
+    print(f'Emotion is {emotion}, gesture is {gesture}.')
+
+    if gesture == 'thumb_up' or emotion == 'happy':
         conn.execute('emoji')
 
-    # if most_common_emotion == 'happy':
-    #     conn.execute('like')
+    if gesture == 'thumb_down' or (emotion != 'neutral' and emotion != 'happy'):
+        conn.scroll()
     
-    return jsonify({"emotion": most_common_emotion})
+    return jsonify({"emotion": emotion})
