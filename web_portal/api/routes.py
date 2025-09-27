@@ -1,10 +1,7 @@
-from flask import Blueprint, jsonify, request, Flask, render_template
-import requests
-import json
-import websocket
-from main import EmotionDetector
+from flask import Blueprint, jsonify, request, render_template
+from web_portal import main
 
-emotion_detector = EmotionDetector()
+emotion_detector = main.EmotionDetector()
 
 api_blueprint = Blueprint("api", __name__)
 

@@ -7,39 +7,40 @@
 <body>
 
       <video id="video" autoplay></video>
-  <p id="emotion"></p>
+      <p id="emotion"></p>
 
-  <script>
-    const video = document.getElementById("video");
-    const emotionDisplay = document.getElementById("emotion");
+      <script>
+            const video = document.getElementById("video");
+            const emotionDisplay = document.getElementById("emotion");
 
-    // Access webcam
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => { video.srcObject = stream; });
+            // Access webcam
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => { video.srcObject = stream; });
 
-    // Capture and send frame every 2s
-    setInterval(() => {
-      let canvas = document.createElement("canvas");
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      let ctx = canvas.getContext("2d");
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            // Capture and send frame every 2s
+            setInterval(() => {
+                let canvas = document.createElement("canvas");
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                let ctx = canvas.getContext("2d");
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      canvas.toBlob(blob => {
-        let formData = new FormData();
-        formData.append("frame", blob, "frame.jpg");
+                canvas.toBlob(blob => {
+                    let formData = new FormData();
+                    formData.append("frame", blob, "frame.jpg");
 
-        fetch("http://localhost:5000/analyze_emotion", {
-          method: "POST",
-          body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-          emotionDisplay.innerText = "Emotion: " + data.emotion;
-        });
-      }, "image/jpeg");
-    }, 2000);
-  </script>
+                    // fetch("http://localhost:5000/analyze_emotion", {
+                    //   method: "POST",
+                    //   body: formData
+                    // })
+                    // .then(res => res.json())
+                    // .then(data => {
+                    //   emotionDisplay.innerText = "Emotion: " + data.emotion;
+                    // });
+                }, "image/jpeg");
+            }, 2000);
+
+      </script>
 
 </body>
 </html>
