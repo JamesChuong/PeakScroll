@@ -9,3 +9,8 @@ api_blueprint = Blueprint("api", __name__)
 def hello():
     return jsonify({"message": "Hello from API!"})
 
+@api_blueprint.route("/analyze_emotion", methods=["POST"]):
+def analyze_emotion():
+    pass
+
+

@@ -50,6 +50,10 @@ while True:
 
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
+    if len(faces) == 0:
+
+        continue
+
     if len(faces) > 0:
         # For single face, select the largest one (or implement other logic)
         (x, y, w, h) = max(faces, key=lambda rect: rect[2] * rect[3])  # Largest face by area
