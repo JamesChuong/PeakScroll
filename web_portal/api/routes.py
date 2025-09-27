@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, Flask, render_template
 import requests
 import json
 import websocket
-from main import EmotionDetector
+from web_portal.emotion_detector import EmotionDetector
 
 emotion_detector = EmotionDetector()
 
