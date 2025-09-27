@@ -43,13 +43,3 @@ class CDPConnection:
         }
         self.msg_id += 1
         self.send_command(json.dumps(command))
-
-conn = CDPConnection()
-
-time.sleep(10)
-
-print("scrolling")
-conn.scroll()
-print("done scrolling")
-
-time.sleep(999)

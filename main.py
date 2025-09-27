@@ -2,11 +2,17 @@ from collections import deque, Counter
 
 import numpy as np
 import cv2 as cv
+from time import perf_counter
 from deepface import DeepFace
 from enum import Enum
 
+from cdp_connection import CDPConnection
+
 cap = cv.VideoCapture(0)
 
+conn = CDPConnection()
+
+last_scroll = perf_counter()
 
 class Emotions(Enum):
     HAPPY = 1
@@ -19,11 +25,11 @@ face_cascade = cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalf
 
 current_emotion = ""
 
-emotion_buffer = deque(maxlen=50)  # about 1 sec if 30fps
+emotion_buffer = deque(maxlen=10)  # about 1 sec if 30fps
 
-frame_count = 0
+# frame_count = 0
 
-skip_frame = 3
+# skip_frame = 3
 
 if not cap.isOpened():
     print("Cannot open camera")
@@ -34,10 +40,6 @@ while True:
     ret, frame = cap.read()
 
     # if frame is read correctly ret is True
-
-    frame_count += 1
-    if frame_count % skip_frame != 0:
-        continue  # skip this frame
 
     if not ret:
         print("Can't receive frame (stream end?). Exiting ...")
@@ -63,9 +65,14 @@ while True:
 
                 most_common_emotion = Counter(emotion_buffer).most_common(1)[0][0]
 
-                if current_emotion != most_common_emotion:
-                    current_emotion = emotion
-                    print(f"The emotion is {current_emotion}")
+                # if current_emotion != most_common_emotion:
+                #     current_emotion = emotion
+                #     print(f"The emotion is {current_emotion}")
+
+                if most_common_emotion == 'happy' and perf_counter() - last_scroll > 4:
+                    last_scroll = perf_counter()
+                    print(f"Scrolling because {most_common_emotion}")
+                    conn.scroll()
 
         except Exception as e:
             print(f"Emotion analysis error: {e}")
