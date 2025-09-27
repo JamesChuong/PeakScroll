@@ -54,4 +54,16 @@ In short: this will **change the scrolling game forever**.
 git clone https://github.com/your-org/emotion-autoscroller.git
 cd emotion-autoscroller
 pip install -r requirements.txt
-Let your feed scroll with empathy.
+```
+### Running PeakScroll
+
+PeakScroll uses a Flask web server to capture facial data from your webcam
+from the browser, determine emotions, and send data to Chrome via the DevTools Protocol
+> This assumes that you are in the root directory (`\PeakScroll`) and that Instagram reels is open on Chrome
+```bash
+# Go to the web portal directory
+cd web_portal
+# Run the Flask app
+flask run
+```
+> The web server runs on `localhost:5000`, make sure that webcam access is enabled
