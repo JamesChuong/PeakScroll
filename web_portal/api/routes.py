@@ -4,31 +4,25 @@ import requests
 import json
 import websocket
 from web_portal.emotion_detector import EmotionDetector
+from web_portal.cdp_connection import CDPConnection
 
 emotion_detector = EmotionDetector()
 
+conn = CDPConnection()
+
 api_blueprint = Blueprint("api", __name__)
-
-
-# @api_blueprint.route("", methods=["GET"])
-# def hello():
-#     return jsonify({"message": "Hello from API!"})
-
 
 @api_blueprint.route('/')
 def home_page():
     return render_template('index.html')
 
-
 @api_blueprint.route("/analyze_emotion", methods=["POST"])
 def analyze_emotion():
-
     frame = request.files["frame"].read()
 
     most_common_emotion = emotion_detector.analyze_emotions(frame)
+    
+    if most_common_emotion != 'neutral' and most_common_emotion != 'happy':
+        conn.scroll()
 
     return jsonify({"emotion": most_common_emotion})
-
-
-
-

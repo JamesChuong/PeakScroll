@@ -29,7 +29,7 @@
                     let formData = new FormData();
                     formData.append("frame", blob, "frame.jpg");
 
-                    fetch("http://localhost:5000/analyze_emotion", {
+                    fetch("/analyze_emotion", {
                         method: "POST",
                         body: formData
                     })
@@ -38,7 +38,7 @@
                         emotionDisplay.innerText = "Emotion: " + data.emotion;
                     });
                 }, "image/jpeg");
-            }, 2000);
+            }, 1000);
 
       </script>
 
