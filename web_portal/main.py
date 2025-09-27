@@ -34,11 +34,11 @@ VisionRunningMode = mp.tasks.vision.RunningMode
 PoseLandmarkerResult = mp.tasks.vision.PoseLandmarkerResult
 
 def print_result_gesture(result, output_image: mp.Image, timestamp_ms: int):
-    print('pose landmarker result: {}'.format(result))
+    print('gesture: {}'.format(result.gestures))
     # self.results = result
 
 options = GestureRecognizerOptions(
-        base_options=BaseOptions(model_asset_path="/home/simonp/Projects/PeakScroll/models/gesture_recognizer.task"),
+        base_options=BaseOptions(model_asset_path="../models/gesture_recognizer.task"),
         running_mode=VisionRunningMode.LIVE_STREAM,
         result_callback=print_result_gesture)
 
@@ -83,7 +83,7 @@ while True:
         (x, y, w, h) = max(faces, key=lambda rect: rect[2] * rect[3])  # Largest face by area
 
     else:
-        pass
+        continue
         # (x, y, w, h) = faces[0]
 
     face_roi = frame[y:y + h, x:x + w]
