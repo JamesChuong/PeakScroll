@@ -50,33 +50,40 @@ while True:
 
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
-    for (x, y, w, h) in faces:
-        face_roi = frame[y:y + h, x:x + w]
+    if len(faces) > 0:
+        # For single face, select the largest one (or implement other logic)
+        (x, y, w, h) = max(faces, key=lambda rect: rect[2] * rect[3])  # Largest face by area
 
-        try:
-            # Analyze emotions using deepface
-            predictions = DeepFace.analyze(face_roi, actions=['emotion'], enforce_detection=False)
-            if predictions:
-                emotion = predictions[0]['dominant_emotion']
-                emotion_buffer.append(emotion)
+    else:
 
-                cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                cv.putText(frame, emotion, (x, y - 10), cv.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+        (x, y, w, h) = faces[0]
 
-                most_common_emotion = Counter(emotion_buffer).most_common(1)[0][0]
+    face_roi = frame[y:y + h, x:x + w]
 
-                # if current_emotion != most_common_emotion:
-                #     current_emotion = emotion
-                #     print(f"The emotion is {current_emotion}")
+    try:
+        # Analyze emotions using deepface
+        predictions = DeepFace.analyze(face_roi, actions=['emotion'], enforce_detection=False)
+        if predictions:
+            emotion = predictions[0]['dominant_emotion']
+            emotion_buffer.append(emotion)
 
-                if most_common_emotion == 'happy' and perf_counter() - last_scroll > 4:
-                    last_scroll = perf_counter()
-                    print(f"Scrolling because {most_common_emotion}")
-                    conn.scroll()
+            cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv.putText(frame, emotion, (x, y - 10), cv.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
 
-        except Exception as e:
-            print(f"Emotion analysis error: {e}")
-            cv.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)  # Mark problematic faces
+            most_common_emotion = Counter(emotion_buffer).most_common(1)[0][0]
+
+            # if current_emotion != most_common_emotion:
+            #     current_emotion = emotion
+            #     print(f"The emotion is {current_emotion}")
+
+            if most_common_emotion == 'happy' and perf_counter() - last_scroll > 4:
+                last_scroll = perf_counter()
+                print(f"Scrolling because {most_common_emotion}")
+                conn.scroll()
+
+    except Exception as e:
+        print(f"Emotion analysis error: {e}")
+        cv.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)  # Mark problematic faces
 
     cv.imshow('Emotion Detection', frame)
 
