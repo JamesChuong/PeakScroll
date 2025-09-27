@@ -1,4 +1,5 @@
 import cv2 as cv
+import numpy as np
 from deepface import DeepFace
 
 class EmotionDetector():
@@ -7,6 +8,12 @@ class EmotionDetector():
 
     # returns string: 'happy', 'neutral', ...
     def analyze_emotions(self, file):
+
+        npimg = np.frombuffer(file, np.uint8)
+
+        # Decode image
+        file = cv.imdecode(npimg, cv.IMREAD_COLOR)
+
         gray = cv.cvtColor(file, cv.COLOR_BGR2GRAY)
         faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
@@ -26,9 +33,9 @@ class EmotionDetector():
                 face_roi,
                 actions=['emotion'],
                 enforce_detection=False,
-                model_name='Facenet512'
             )
             if predictions:
+                print(f"The emotion is {predictions[0]['dominant_emotion']}")
                 return predictions[0]['dominant_emotion']
 
         except Exception as e:
