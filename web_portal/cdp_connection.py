@@ -47,7 +47,7 @@ class CDPConnection:
 
     def execute(self, script_or_filename):
         js_to_execute = script_or_filename
-        filepath = f"{script_or_filename}.js"
+        filepath = f"./js/{script_or_filename}.js"
 
         if os.path.exists(filepath):
             with open(filepath, 'r') as f:
