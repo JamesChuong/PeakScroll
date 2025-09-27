@@ -59,7 +59,7 @@ pip install -r requirements.txt
 
 PeakScroll uses a Flask web server to capture facial data from your webcam
 from the browser, determine emotions, and send data to Chrome via the DevTools Protocol
-> This assumes that you are in the root directory (`\PeakScroll`)
+> This assumes that you are in the root directory (`\PeakScroll`) and that Instagram reels is open on Chrome
 ```bash
 # Go to the web portal directory
 cd web_portal
