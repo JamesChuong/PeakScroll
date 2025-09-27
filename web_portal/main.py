@@ -34,7 +34,7 @@ VisionRunningMode = mp.tasks.vision.RunningMode
 PoseLandmarkerResult = mp.tasks.vision.PoseLandmarkerResult
 
 def print_result_gesture(result, output_image: mp.Image, timestamp_ms: int):
-    print('pose landmarker result: {}'.format(result))
+    print('gesture: {}'.format(result.gestures))
     # self.results = result
 
 options = GestureRecognizerOptions(
