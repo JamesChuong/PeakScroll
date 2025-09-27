@@ -1,5 +1,5 @@
 from flask import Flask
-from api.routes import api_blueprint   # import the blueprint
+from web_portal.api.routes import api_blueprint   # import the blueprint
 
 app = Flask(__name__)
 

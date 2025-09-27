@@ -29,14 +29,14 @@
                     let formData = new FormData();
                     formData.append("frame", blob, "frame.jpg");
 
-                    // fetch("http://localhost:5000/analyze_emotion", {
-                    //   method: "POST",
-                    //   body: formData
-                    // })
-                    // .then(res => res.json())
-                    // .then(data => {
-                    //   emotionDisplay.innerText = "Emotion: " + data.emotion;
-                    // });
+                    fetch("http://localhost:5000/analyze_emotion", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        emotionDisplay.innerText = "Emotion: " + data.emotion;
+                    });
                 }, "image/jpeg");
             }, 2000);
 
