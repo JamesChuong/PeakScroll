@@ -20,6 +20,16 @@
         </div>
 
     </div>
+                    fetch("/analyze_emotion", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        emotionDisplay.innerText = "Emotion: " + data.emotion;
+                    });
+                }, "image/jpeg");
+            }, 1000);
 
 
     <script>
@@ -40,17 +50,16 @@
             canvas.toBlob(blob => {
                 let formData = new FormData();
                 formData.append("frame", blob, "frame.jpg");
-
-                fetch("http://localhost:5000/analyze_emotion", {
-                    method: "POST",
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    emotionDisplay.innerText = "Emotion: " + data.emotion;
-                });
-            }, "image/jpeg");
-        }, 500);
+                fetch("/analyze_emotion", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        emotionDisplay.innerText = "Emotion: " + data.emotion;
+                    });
+                }, "image/jpeg");
+            }, 1000);
     </script>
 
 </body>

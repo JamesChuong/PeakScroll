@@ -33,6 +33,7 @@ class EmotionDetector():
                 face_roi,
                 actions=['emotion'],
                 enforce_detection=False,
+                detector_backend='ssd'
             )
             if predictions:
                 print(f"The emotion is {predictions[0]['dominant_emotion']}")
