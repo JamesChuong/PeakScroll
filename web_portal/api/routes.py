@@ -28,10 +28,16 @@ def analyze_emotion():
 
     print(f'Emotion is {emotion}, gesture is {gesture}.')
 
-    if gesture == 'thumb_up' or emotion == 'happy':
+    if gesture == 'thumb_up' and conn.title == 'instagram':
+        conn.execute('like')
+
+    if emotion == 'happy' and conn.title == 'instagram':
         conn.execute('emoji')
 
-    if gesture == 'thumb_down' or (emotion != 'neutral' and emotion != 'happy'):
-        conn.scroll()
-    
-    return jsonify({"emotion": emotion})
+    if gesture == 'thumb_down' or gesture == 'closed_fist':
+        conn.scroll(512)
+
+    if gesture == 'pointing_up':
+        conn.scroll(-512)
+
+    return jsonify({"emotion": emotion, "gesture": gesture})
