@@ -34,7 +34,7 @@ class CDPConnection:
         response = json.loads(self.ws.recv())
         print(response)
 
-    def scroll(self):
+    def scroll(self, deltaY):
         # can only scroll after a two second cooldown
         if time.perf_counter() - self.last_scrolled < 2:
             return
@@ -49,7 +49,7 @@ class CDPConnection:
                 "x": 500,
                 "y": 500,
                 "deltaX": 0,
-                "deltaY": 512,
+                "deltaY": deltaY,
                 "pointerType": "mouse"
             }
         }
