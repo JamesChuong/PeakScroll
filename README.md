@@ -37,7 +37,9 @@ ___
 ---
 
 ## 🔮 Why This Matters  
-Short-form video platforms dominate user attention—but they don’t adapt to how we actually **feel**. This project is a **step toward empathetic computing**, where the interface responds to our emotions instead of ignoring them.  
+Short-form video platforms dominate user attention—but they don’t adapt to how we actually **feel**. This project is a **step toward empathetic computing**, and the interface responds to our emotions instead of ignoring them.
+
+Get [wifi](https://www.youtube.com/shorts/OMP3Yx-YZsw) anywhere you go.
 
 For **investors and innovators**, this represents:  
 - A **cutting-edge AI demonstration** of emotion-aware interfaces.  
@@ -77,12 +79,37 @@ deactivate
 ```
 ### Running PeakScroll
 
-PeakScroll uses a Flask web server to capture facial data from your webcam, determine emotions, and send data to Chrome via the DevTools Protocol
-> This assumes that you are in the root directory (`\PeakScroll`) and that Instagram reels is open on Chrome
+PeakScroll uses a Flask web server to capture facial data from your webcam, determine emotions, and send data to Chrome via the DevTools Protocol.
+
+To open Chrome with the DevTools Protocol enabled, you must locate the executable, and run it with the remote debugging port flag on.
+
+Ensure all other instances of Chrome are completely closed (e.g., on MacOS, right-click icon and click Quit even when no windows are open).
+
+```
+mkdir /tmp/chrome-debug-profile
+<path to chrome executable> --remote-debugging-port=9222 --user-data-dir=/tmp/chrome-debug-profile
+```
+
+Proceed to open Instagram Reels and log in on the debug browser.
+
+Then, in another terminal, enter the PeakScroll repository and do the following:
+
 ```bash
 # Go to the web portal directory
 cd web_portal
 # Run the Flask app
 flask run
 ```
-> The web server runs on `localhost:5000` or `127.0.0.1:5000`, make sure that webcam access is enabled
+
+The web server runs on `localhost:5000` or `127.0.0.1:5000`, make sure that that URL is open in your browser, as that is how the camera feed is processed.
+
+Enjoy your PeakScrolling (tm pending) from the Instagram Reels tab!
+
+---
+
+## Contributors
+
+- Nakul Bansal
+- James Chuong
+- Simon Purdon
+- Micah Baker
